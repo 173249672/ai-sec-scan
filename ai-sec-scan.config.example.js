@@ -38,5 +38,29 @@ module.exports = {
      * 如果不配置此项，工具将使用内置的安全专家提示词
      */
     // systemPrompt: '你是一个专业的资深代码审计专家...',
+  },
+  
+  scanner: {
+    /**
+     * 自定义 AST 扫描规则
+     * 
+     * 支持四种匹配类型:
+     * - property: 匹配属性赋值 (如 document.cookie)
+     * - call: 匹配函数调用 (如 setTimeout)
+     * - jsxAttribute: 匹配 React JSX 属性 (如 dangerouslySetInnerHTML)
+     * - vueInstruction: 匹配 Vue 指令 (如 v-html)
+     */
+    customRules: [
+      { 
+        name: 'localStorage', 
+        type: 'property', 
+        message: '禁用的持久化存储 (localStorage)' 
+      },
+      {
+        name: 'setTimeout',
+        type: 'call',
+        message: '异步代码执行风险 (setTimeout)'
+      }
+    ]
   }
 };

@@ -7,7 +7,7 @@
     "ai-sec-scan": "bin/cli.js"
   },
   "scripts": {
-    "test": "node test/config-loader.test.js && node test/cache-manager.test.js"
+    "test": "node test/config-loader.test.js && node test/cache-manager.test.js && node test/ast-scanner.test.js"
   },
   "files": [
     "lib",

@@ -53,6 +53,24 @@ module.exports = {
     model: 'qwen3.5-plus',      // 指定模型 (如 deepseek-chat)
     temperature: 0.1,           // 逻辑温度
     // systemPrompt: '...'       // 自定义 AI 审计逻辑
+  },
+  scanner: {
+    /**
+     * 自定义 AST 扫描规则
+     * 支持 property (属性), call (函数调用), jsxAttribute (JSX属性), vueInstruction (Vue指令)
+     */
+    customRules: [
+      { 
+        name: 'localStorage', 
+        type: 'property', 
+        message: '禁用的持久化存储 (localStorage)' 
+      },
+      {
+        name: 'setTimeout',
+        type: 'call',
+        message: '异步代码执行风险 (setTimeout)'
+      }
+    ]
   }
 };
 ```
@@ -73,6 +91,14 @@ npx ai-sec-scan ./test-components
 ```
 
 执行后工具将自动跳过 `node_modules`、`dist`、`tests` 等无关目录，并控制高并发访问发起 AI 深度分析。扫描完成后工具会自动调用默认浏览器为你展示分析面板 (`audit-report.html`)。
+
+#### 模式三：结果导出 (--json)
+
+你可以通过 `--json` 参数将扫描摘要和详细漏洞信息导出为 JSON 文件，极其方便 CI/CD 或第三方平台解析。
+
+```bash
+npx ai-sec-scan ./src --json audit-results.json
+```
 
 #### 模式二：结合 Git 的增量拦截 (-s 模式)
 
@@ -149,6 +175,19 @@ module.exports = {
     model: 'qwen3.5-plus',      // Specify AI model
     temperature: 0.1,           // Sampling temperature
     // systemPrompt: '...'       // Custom AI auditing logic
+  },
+  scanner: {
+    /**
+     * Custom AST scanning rules
+     * Supports property, call, jsxAttribute, vueInstruction
+     */
+    customRules: [
+      { 
+        name: 'localStorage', 
+        type: 'property', 
+        message: 'Disabled Persistent Storage (localStorage)' 
+      }
+    ]
   }
 };
 ```
@@ -169,6 +208,14 @@ npx ai-sec-scan ./test-components
 ```
 
 Once executed, the tool automatically skips irrelevant folders like `node_modules`, `dist`, and `tests`. It also manages concurrency while initiating deep AI analysis. Upon completion, the tool will automatically open your default browser to display the analysis dashboard (`audit-report.html`).
+
+#### Mode 3: Result Export (--json)
+
+You can export the scan summary and detailed vulnerability information into a JSON file using the `--json` parameter, which is convenient for CI/CD or 3rd-party platform parsing.
+
+```bash
+npx ai-sec-scan ./src --json audit-results.json
+```
 
 #### Mode 2: Incremental Interception via Git Hooks (-s flag)
 
