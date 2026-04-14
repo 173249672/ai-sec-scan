@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const pLimit = require('p-limit');
 const fs = require('fs');
 const open = require('open');
+const inquirer = require('inquirer');
 const { execSync } = require('child_process');
 
 // 导入我们重构后的模块
@@ -93,6 +94,7 @@ program
   .option('-s, --staged', '增量模式 (只扫描 Git 暂存区)')
   .option('--json <path>', '导出扫描结果到 JSON 文件')
   .option('--fix', '自动应用针对高危漏洞的 AI 修复建议')
+  .option('--yes', '静默执行，直接应用所有修复（不进行交互式确认）')
   .action(async (dir, options) => {
     const startTime = Date.now();
     let files = [];
@@ -215,10 +217,10 @@ program
     await open(reportPath);
 
     if (options.fix && summary.aiConfirmedHigh > 0) {
-      console.log(chalk.yellow.bold('\n🛠️  执行自动修复程序...'));
-      const fixCount = applyFixes(auditDetails, suspiciousFiles);
-      console.log(chalk.green.bold(`✨ 修复完成！已自动修复 ${fixCount} 个高危漏洞点。`));
-      console.log(chalk.gray('请检查代码并运行测试以确保系统稳定性。\n'));
+      console.log(chalk.yellow.bold('\n🛠️  启动 AI 自动修复程序...'));
+      const fixCount = await applyFixes(auditDetails, suspiciousFiles, options.yes);
+      console.log(chalk.green.bold(`✨ 修复完成！本轮共修复了 ${fixCount} 个高危漏洞点。`));
+      console.log(chalk.gray('请检查代码变更并运行测试以确保系统稳定性。\n'));
     }
 
     // --- 6. 核心：Git 拦截逻辑 ---
@@ -234,48 +236,82 @@ program
   });
 
 /**
- * 自动修复核心逻辑
+ * 自动修复核心逻辑 (交互式)
  */
-function applyFixes(auditDetails, suspiciousFiles) {
+async function applyFixes(auditDetails, suspiciousFiles, skipConfirm = false) {
   let count = 0;
+  let applyAllRemaining = skipConfirm;
   
   // 1. 按文件归类漏洞点
   const fileFixes = {};
   auditDetails.forEach(detail => {
     if (detail.riskLevel === 'High' && detail.fixCode && detail.fixCode.trim() !== '') {
       if (!fileFixes[detail.file]) fileFixes[detail.file] = [];
-      
-      // 找到该文件对应的 AST 原始 sink (包含 offset)
       const original = suspiciousFiles.find(s => s.file === detail.file);
       if (original && original.sinks) {
         original.sinks.forEach(sink => {
           fileFixes[detail.file].push({
+            reason: detail.reason,
             start: sink.start,
             end: sink.end,
+            oldCode: sink.codeSnippet,
             fixCode: detail.fixCode
           });
-          count++;
         });
       }
     }
   });
 
-  // 2. 逐个文件应用修复 (倒序替换)
-  Object.keys(fileFixes).forEach(filePath => {
-    try {
-      let content = fs.readFileSync(filePath, 'utf-8');
-      // 按 start 偏移量从大到小排序，确保先修后面的，不影响前面的偏移
-      const sortedFixes = fileFixes[filePath].sort((a, b) => b.start - a.start);
+  // 2. 逐个文件应用修复
+  const files = Object.keys(fileFixes);
+  for (const filePath of files) {
+    const sortedFixes = fileFixes[filePath].sort((a, b) => b.start - a.start);
+    let currentContent = fs.readFileSync(filePath, 'utf-8');
+    let fileHasChanges = false;
+
+    console.log(chalk.blue(`\n📂 正在处理: ${filePath}`));
+
+    for (const fix of sortedFixes) {
+      if (!applyAllRemaining) {
+        console.log(chalk.cyan('\n----------------------------------------'));
+        console.log(chalk.yellow(`漏洞原因: ${fix.reason}`));
+        console.log(chalk.red(`[-] 源码: ${fix.oldCode.trim()}`));
+        console.log(chalk.green(`[+] 修复: ${fix.fixCode.trim()}`));
+        console.log(chalk.cyan('----------------------------------------'));
+        
+        const answer = await inquirer.prompt([{
+          type: 'list',
+          name: 'action',
+          message: '是否应用此 AI 修复建议?',
+          choices: [
+            { name: '✅ 是 (Apply)', value: 'yes' },
+            { name: '⏭️ 跳过 (Skip)', value: 'no' },
+            { name: '🚀 全部应用 (All)', value: 'all' },
+            { name: '🛑 退出 (Quit)', value: 'quit' }
+          ]
+        }]);
+
+        if (answer.action === 'quit') return count;
+        if (answer.action === 'no') continue;
+        if (answer.action === 'all') applyAllRemaining = true;
+      }
+
+      // 执行替换逻辑
+      const actualStart = fix.start;
+      const actualEnd = fix.end;
+      currentContent = currentContent.slice(0, actualStart) + fix.fixCode + currentContent.slice(actualEnd);
+      fileHasChanges = true;
+      count++;
       
-      sortedFixes.forEach(fix => {
-        content = content.slice(0, fix.start) + fix.fixCode + content.slice(fix.end);
-      });
-      
-      fs.writeFileSync(filePath, content, 'utf-8');
-    } catch (e) {
-      console.error(chalk.red(`  ❌ 无法写入文件: ${filePath} (${e.message})`));
+      if (!applyAllRemaining) {
+        console.log(chalk.green(`  ✔️ 已应用修复`));
+      }
     }
-  });
+
+    if (fileHasChanges) {
+      fs.writeFileSync(filePath, currentContent, 'utf-8');
+    }
+  }
 
   return count;
 }
