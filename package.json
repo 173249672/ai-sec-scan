@@ -41,6 +41,7 @@
     "commander": "^11.x",
     "dotenv": "^16.x",
     "fast-glob": "^3.x",
+    "inquirer": "^8.2.7",
     "open": "^8.x",
     "openai": "^4.x",
     "ora": "^5.x",
