@@ -1,0 +1,25 @@
+{
+  "scanTime": "2026-04-14T10:05:56.727Z",
+  "summary": {
+    "totalScanned": 1,
+    "suspiciousDetected": 1,
+    "aiCachedHits": 1,
+    "aiConfirmedHigh": 1,
+    "aiConfirmedSafe": 0,
+    "failedRequests": 0
+  },
+  "details": [
+    {
+      "file": "./test-lab/vulnerable-react.tsx",
+      "riskLevel": "High",
+      "reason": "代码存在三个严重安全漏洞：1. 路径穿越：user.id 未 sanitize 直接用于文件路径，攻击者可写入任意文件。2. XSS：dangerouslySetInnerHTML 直接渲染用户输入的 bio，可执行恶意脚本。3. 代码注入：eval 执行用户控制的 customScript，可导致完全接管客户端逻辑。此外，在 React 组件中直接使用 fs 模块通常意味着架构错误（客户端不应访问文件系统）。",
+      "suggestion": "1. 对 user.id 进行白名单过滤，仅允许安全字符。2. 避免使用 dangerouslySetInnerHTML，如需渲染 HTML 请使用 DOMPurify 等库清洗，或直接渲染文本。3. 严禁使用 eval，移除该功能或使用安全的配置映射。4. 将文件系统操作移至后端 API。",
+      "fixCode": {
+        "1": "const safeId = user.id.replace(/[^a-z0-9_-]/gi, '_');\n    fs.writeFile(`./configs/${safeId}.json`, JSON.stringify(user), (err) => {\n      if (err) console.error(err);\n    });",
+        "2": "dangerouslySetInnerHTML={{ __html: user.bio.replace(/<[^>]*>/g, '') }}",
+        "3": "onClick={() => { console.warn('Custom script execution disabled for security'); }}"
+      },
+      "_cached": true
+    }
+  ]
+}
