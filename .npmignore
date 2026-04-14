@@ -1,0 +1,11 @@
+.env
+node_modules
+audit-report.html
+audit-report.json
+test-components/
+.agent/
+.github/
+.DS_Store
+*.log
+docs/superpowers/
+test/
