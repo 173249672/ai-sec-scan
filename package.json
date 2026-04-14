@@ -12,27 +12,33 @@
   "files": [
     "lib",
     "bin",
-    "README.md"
+    "README.md",
+    "README_EN.md"
   ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "keywords": [
-    "security",
-    "ast",
-    "ai",
+    "security-scanner",
+    "ast-analysis",
+    "ai-security",
+    "vulnerability-detection",
     "vue",
     "react",
-    "scanner",
-    "qwen"
+    "interactive-fix",
+    "qwen",
+    "deepseek"
   ],
   "author": "Abel",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/USER_NAME/ai-sec-scan.git"
+    "url": "https://github.com/YOUR_GITHUB_ID/ai-sec-scan.git"
   },
   "bugs": {
-    "url": "https://github.com/USER_NAME/ai-sec-scan/issues"
+    "url": "https://github.com/YOUR_GITHUB_ID/ai-sec-scan/issues"
   },
-  "homepage": "https://github.com/USER_NAME/ai-sec-scan#readme",
+  "homepage": "https://github.com/YOUR_GITHUB_ID/ai-sec-scan#readme",
   "dependencies": {
     "@babel/parser": "^7.x",
     "@babel/traverse": "^7.x",

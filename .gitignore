@@ -6,3 +6,4 @@ dist/
 .env
 .agent/
 .secscan-cache.json
+docs/
