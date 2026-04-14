@@ -15,7 +15,8 @@
 ### ✨ 核心特性
 
 - **🚀 轻量级性能初筛**：利用 `@vue/compiler-sfc` 与 `@babel/parser` 解析代码 AST，定位如 `innerHTML`、`dangerouslySetInnerHTML`、`eval`、`exec` 等敏感 API 的使用情况，进行风险初筛。
-- **🧠 AI 智能过滤误报**：将初筛出的疑点结合完整上下文代码，交给基于大语言模型的 AI Agent（目前接入通义千问 Qwen3.5）分析受控情况，结合上下文精准分辨真实漏洞与正常的业务逻辑。
+- **🧠 AI 智能过滤误报 (支持多模型)**：基于标准 OpenAI 协议，不仅默认支持通义千问，你也可以轻松切换连接到 **DeepSeek** 或本地的 **Ollama**。AI 会结合完整上下文彻底排查控制流，精准分辨真实漏洞与正常业务逻辑。
+- **⚡ AI 结果缓存系统**：内置基于文件内容与分析提示词的文件级 Hash 缓存！不变的代码将直接跳过 AI 扫描阶段，实现毫秒级复测，极大地节约扫描时间与 API 收费。
 - **📊 优美的漏洞报告**：自动生成基于 HTML 与 Tailwind CSS 驱动的现代数据面板 (`audit-report.html`)，直观地展示风险详情、风险等级和精准的修复建议。
 - **🧱 全栈语法分析支持**：完美兼容 Vue 2/3、React、Next.js、Nuxt 环境，以及原生 Node.js 后端代码体系，支持 `.vue`, `.js`, `.jsx`, `.ts`, `.tsx` 等主流拓展名分析检测。
 - **🛡️ 增量提交防线拦截**：内置对 Husky 与 lint-staged 的支持，实现基于 Git 暂存区 (Staged) 代码的增量安全审计。一旦发现高危漏洞，将精准阻断 Git 提交，防止风险混入代码库。
@@ -36,12 +37,26 @@ pnpm add -D ai-sec-scan
 npm install -g ai-sec-scan
 ```
 
-### 🔑 配置 AI API 凭证
-项目根目录下请创建或修改 `.env` 环境变量配置文件，并填入你的阿里云大模型 API 密钥凭证（使用通义千问模型）：
-
 ```env
 QWEN_API_KEY=your_dashscope_api_key_here
 ```
+
+### ⚙️ 高级配置 (可选)
+对于需要深度定制的用户，可以在项目根目录创建 `ai-sec-scan.config.js`。你可以从 `ai-sec-scan.config.example.js` 复制并修改：
+
+```javascript
+module.exports = {
+  ai: {
+    // 只要模型兼容 OpenAI 协议均可使用
+    // baseURL: 'https://api.deepseek.com/v1', // 使用 DeepSeek 时取消注释
+    // baseURL: 'http://localhost:11434/v1',   // 使用本地 Ollama 时取消注释
+    model: 'qwen3.5-plus',      // 指定模型 (如 deepseek-chat)
+    temperature: 0.1,           // 逻辑温度
+    // systemPrompt: '...'       // 自定义 AI 审计逻辑
+  }
+};
+```
+配置优先级：`配置文件 > 环境变量 > 默认值`。
 
 ### 🚥 使用指南
 
@@ -96,7 +111,8 @@ npx ai-sec-scan ./test-components
 ### ✨ Core Features
 
 - **🚀 Lightweight Initial Screening**: Utilizes `@vue/compiler-sfc` and `@babel/parser` to parse code AST, locating the usage of sensitive APIs such as `innerHTML`, `dangerouslySetInnerHTML`, `eval`, `exec`, etc., for preliminary risk screening.
-- **🧠 AI Intelligent False-Positive Filtering**: Sends the suspected points identified in the initial screening, along with the full code context, to an AI Agent (currently powered by Qwen3.5 LLM) to analyze the data control flow. The context ensures accurate differentiation between actual vulnerabilities and normal business logic.
+- **🧠 AI Intelligent False-Positive Filtering (Multi-Model Support)**: Relying on the standard OpenAI protocol, it supports not only Qwen but also easily connects to **DeepSeek** or a local **Ollama** instance. The AI agent analyzes the data control flow within the full context to accurately separate real vulnerabilities from normal logic.
+- **⚡ AI Results Caching System**: Built-in, file-level MD5 hashing cache (content + prompt hash)! Unchanged code bypasses the AI scanning phase entirely, enabling millisecond-level re-scans and massively saving API costs.
 - **📊 Beautiful Vulnerability Reports**: Automatically generates a modern data dashboard (`audit-report.html`) powered by HTML and Tailwind CSS, intuitively displaying risk details, severity levels, and precise mitigation suggestions.
 - **🧱 Full-Stack Code Support**: Perfectly compatible with Vue 2/3, React, Next.js, and Nuxt environments, as well as native Node.js backend code structures. It supports mainstream extensions such as `.vue`, `.js`, `.jsx`, `.ts`, and `.tsx`.
 - **🛡️ Incremental Commit Defense**: Built-in support for Husky and `lint-staged` allows for incremental security audits based on Git Staged code. If a high-risk vulnerability is discovered, it accurately blocks the Git commit to prevent risks from entering the repository.
@@ -117,12 +133,26 @@ For global installation:
 npm install -g ai-sec-scan
 ```
 
-### 🔑 Authorize AI API Credentials
-Create or modify the `.env` configuration file in the project's root directory and fill in your DashScope API key (using the Qwen model):
-
 ```env
 QWEN_API_KEY=your_dashscope_api_key_here
 ```
+
+### ⚙️ Advanced Configuration (Optional)
+For users requiring deeper customization, create an `ai-sec-scan.config.js` in the project root. You can copy it from `ai-sec-scan.config.example.js`:
+
+```javascript
+module.exports = {
+  ai: {
+    // Compatible with any model supporting the OpenAI protocol
+    // baseURL: 'https://api.deepseek.com/v1', // Uncomment for DeepSeek
+    // baseURL: 'http://localhost:11434/v1',   // Uncomment for local Ollama
+    model: 'qwen3.5-plus',      // Specify AI model
+    temperature: 0.1,           // Sampling temperature
+    // systemPrompt: '...'       // Custom AI auditing logic
+  }
+};
+```
+Precedence: `Config File > Environment Variables > Default Values`.
 
 ### 🚥 Usage Guide
 
