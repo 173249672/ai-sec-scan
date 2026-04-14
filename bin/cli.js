@@ -92,6 +92,7 @@ program
   .argument('[dir]', '指定扫描目录 (全量模式)')
   .option('-s, --staged', '增量模式 (只扫描 Git 暂存区)')
   .option('--json <path>', '导出扫描结果到 JSON 文件')
+  .option('--fix', '自动应用针对高危漏洞的 AI 修复建议')
   .action(async (dir, options) => {
     const startTime = Date.now();
     let files = [];
@@ -213,6 +214,13 @@ program
     console.log(chalk.blue(`\n🌐 详细报告已保存并尝试自动打开: ${reportPath}`));
     await open(reportPath);
 
+    if (options.fix && summary.aiConfirmedHigh > 0) {
+      console.log(chalk.yellow.bold('\n🛠️  执行自动修复程序...'));
+      const fixCount = applyFixes(auditDetails, suspiciousFiles);
+      console.log(chalk.green.bold(`✨ 修复完成！已自动修复 ${fixCount} 个高危漏洞点。`));
+      console.log(chalk.gray('请检查代码并运行测试以确保系统稳定性。\n'));
+    }
+
     // --- 6. 核心：Git 拦截逻辑 ---
     if (options.staged) {
       if (summary.aiConfirmedHigh > 0) {
@@ -224,5 +232,53 @@ program
       }
     }
   });
+
+/**
+ * 自动修复核心逻辑
+ */
+function applyFixes(auditDetails, suspiciousFiles) {
+  let count = 0;
+  
+  // 1. 按文件归类漏洞点
+  const fileFixes = {};
+  auditDetails.forEach(detail => {
+    if (detail.riskLevel === 'High' && detail.fixCode && detail.fixCode.trim() !== '') {
+      if (!fileFixes[detail.file]) fileFixes[detail.file] = [];
+      
+      // 找到该文件对应的 AST 原始 sink (包含 offset)
+      const original = suspiciousFiles.find(s => s.file === detail.file);
+      if (original && original.sinks) {
+        original.sinks.forEach(sink => {
+          fileFixes[detail.file].push({
+            start: sink.start,
+            end: sink.end,
+            fixCode: detail.fixCode
+          });
+          count++;
+        });
+      }
+    }
+  });
+
+  // 2. 逐个文件应用修复 (倒序替换)
+  Object.keys(fileFixes).forEach(filePath => {
+    try {
+      let content = fs.readFileSync(filePath, 'utf-8');
+      // 按 start 偏移量从大到小排序，确保先修后面的，不影响前面的偏移
+      const sortedFixes = fileFixes[filePath].sort((a, b) => b.start - a.start);
+      
+      sortedFixes.forEach(fix => {
+        content = content.slice(0, fix.start) + fix.fixCode + content.slice(fix.end);
+      });
+      
+      fs.writeFileSync(filePath, content, 'utf-8');
+    } catch (e) {
+      console.error(chalk.red(`  ❌ 无法写入文件: ${filePath} (${e.message})`));
+    }
+  });
+
+  return count;
+}
+
 
 program.parseAsync(process.argv);
