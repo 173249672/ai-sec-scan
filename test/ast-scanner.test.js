@@ -9,9 +9,12 @@ console.log('Testing AST Scanner Rules...');
 const vueFile = path.join(process.cwd(), 'test-vhtml.vue');
 fs.writeFileSync(vueFile, `<template><div v-html="rawHtml"></div></template>`);
 const vueScan = scanFile(vueFile);
-assert.ok(vueScan.sinks.some(s => s.type.includes('v-html')), 'Should detect v-html');
+const vHtmlSink = vueScan.sinks.find(s => s.type.includes('v-html'));
+assert.ok(vHtmlSink, 'Should detect v-html');
+assert.strictEqual(typeof vHtmlSink.start, 'number', 'start should be a number');
+assert.strictEqual(typeof vHtmlSink.end, 'number', 'end should be a number');
 fs.unlinkSync(vueFile);
-console.log('✅ Default rule (v-html) detected');
+console.log('✅ Default rule (v-html) detected with offsets');
 
 // 2. Test Custom Rules
 const jsFile = path.join(process.cwd(), 'test-custom.js');
