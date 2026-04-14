@@ -88,10 +88,20 @@ function generateHtmlReport(data) {
   `;
 }
 
+program.version(require('../package.json').version);
+
 program
-  .name('ai-sec-scan')
+  .command('init')
+  .description('✨ 交互式初始化向导：快速配置 AI 模型与 Husky 拦截防线')
+  .action(async () => {
+    const { runWizard } = require('../lib/init-wizard');
+    await runWizard();
+  });
+
+program
+  .command('scan [dir]', { isDefault: true })
   .description('兼容 Vue/React/Node 的 AI 自动化安全扫描工具')
-  .argument('[dir]', '指定扫描目录 (全量模式)')
+  .argument('[dir]', '指定扫描目录或文件 (默认: .)')
   .option('-s, --staged', '增量模式 (只扫描 Git 暂存区)')
   .option('--json <path>', '导出扫描结果到 JSON 文件')
   .option('--fix', '自动应用针对高危漏洞的 AI 修复建议')
