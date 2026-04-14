@@ -12,6 +12,7 @@ const { execSync } = require('child_process');
 // 导入我们重构后的模块
 const { scanFile } = require('../lib/ast-scanner');
 const { analyzeWithQwen } = require('../lib/ai-auditor');
+const { CacheManager } = require('../lib/cache-manager');
 /**
  * 生成漂亮的 HTML 报告模板
  */
@@ -140,26 +141,34 @@ program
     const summary = {
       totalScanned: files.length,
       suspiciousDetected: suspiciousFiles.length,
+      aiCachedHits: 0,
       aiConfirmedHigh: 0,
       aiConfirmedSafe: 0,
       failedRequests: 0
     };
+    const cacheManager = new CacheManager();
     const auditDetails = [];
 
     const tasks = suspiciousFiles.map(item => limit(async () => {
       const spinner = ora(chalk.gray(`分析 ${item.file}...`)).start();
       try {
-        const report = await analyzeWithQwen(item.file, item);
+        const report = await analyzeWithQwen(item.file, item, cacheManager);
         spinner.stop();
 
         auditDetails.push({ file: item.file, ...report });
 
+        const fromCacheMsg = report._cached ? chalk.gray(' (缓存命中)') : '';
+
         if (report.riskLevel === 'High') {
           summary.aiConfirmedHigh++;
-          console.log(chalk.red(`  🚨 [高危] ${item.file}`));
+          console.log(chalk.red(`  🚨 [高危] ${item.file}`) + fromCacheMsg);
         } else {
           summary.aiConfirmedSafe++;
-          console.log(chalk.green(`  ✅ [安全] ${item.file}`));
+          console.log(chalk.green(`  ✅ [安全] ${item.file}`) + fromCacheMsg);
+        }
+
+        if (report._cached) {
+           summary.aiCachedHits++;
         }
       } catch (err) {
         summary.failedRequests++;
@@ -168,6 +177,8 @@ program
     }));
 
     await Promise.all(tasks);
+
+    cacheManager.save();
 
     // --- 4. 生成报告 ---
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -187,6 +198,7 @@ program
     console.log(`⏱️  总耗时:     ${duration}s`);
     console.log(`📂 扫描文件:   ${summary.totalScanned}`);
     console.log(`🔍 AST 嫌疑点: ${summary.suspiciousDetected}`);
+    console.log(`⚡ API 缓存命中: ${summary.aiCachedHits}`);
     console.log(chalk.red(`🚨 AI 确认高危: ${summary.aiConfirmedHigh}`));
     console.log(chalk.green(`🛡️  AI 排除误报: ${summary.aiConfirmedSafe}`));
     console.log(chalk.cyan('='.repeat(40)));
