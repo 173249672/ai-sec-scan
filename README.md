@@ -12,8 +12,9 @@
 ### ✨ Core Features
 
 - **🧠 AI Smart Audit & False Positive Filtering**: Compatible with OpenAI protocol. Supports **Qwen**, **DeepSeek**, **Ollama**, and more. AI understands context to distinguish real vulnerabilities from normal logic.
-- **🛠️ Interactive Auto-Fixing (--fix)**: **Industry-leading remediation**. Proposes precise code patches and supports "Git-style" interactive confirmation before applying changes to your source code.
-- **⚡ Millisecond-Level AI Caching**: Built-in content-hash caching engine. Unchanged code bypasses AI auditing, ensuring near-instant rescans and significant API cost savings.
+- **🛠️ Interactive Auto-Fixing (--fix)**: **Industry-leading remediation**. Proposes precise code patches and supports "Git-style" interactive confirmation.
+- **⚡ Millisecond-Level AI Caching**: Built-in content-hash caching engine. Unchanged code bypasses AI auditing, saving significant API costs.
+- **🧠 AI Expert Mode & Custom Prompts**: Full control over the AI's behavior. Customize the **System Prompt** via `init` wizard or config file to suit your specific security compliance needs.
 - **🧱 Full-Stack Grammar Support**: Deeply optimized for `.vue`, `.js`, `.jsx`, `.ts`, and `.tsx`. Supports both Vue SFC blocks and complex React JSX structures.
 - **📊 Automated Reporting & Integration**: Generates beautiful HTML visual reports and standard JSON exports for seamless CI/CD integration.
 - **🛡️ Incremental Commits Defense**: Supports `--staged` mode, working with Husky/lint-staged to block high-risk commits at the gates.
@@ -32,9 +33,10 @@ npm install -g ai-sec-scan
 
 ### ✨ Zero-Config Initialization (Recommended)
 For new integrations, we provide an interactive setup wizard that automatically:
-1. Installs and configures `husky` and `lint-staged` for commit interception.
+1. Installs and configures `husky` and `lint-staged`.
 2. Prompts you to select your preferred AI model (Qwen/DeepSeek/Ollama).
-3. Securely manages your API Keys in a `.env` file.
+3. **Expert Mode**: Allows customizing the **System Prompt** for bespoke security rules.
+4. Securely manages your API Keys in a `.env` file.
 
 ```bash
 npx ai-sec-scan init
