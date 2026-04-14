@@ -20,6 +20,7 @@
 - **📊 优美的漏洞报告**：自动生成基于 HTML 与 Tailwind CSS 驱动的现代数据面板 (`audit-report.html`)，直观地展示风险详情、风险等级和精准的修复建议。
 - **🧱 全栈语法分析支持**：完美兼容 Vue 2/3、React、Next.js、Nuxt 环境，以及原生 Node.js 后端代码体系，支持 `.vue`, `.js`, `.jsx`, `.ts`, `.tsx` 等主流拓展名分析检测。
 - **🛡️ 增量提交防线拦截**：内置对 Husky 与 lint-staged 的支持，实现基于 Git 暂存区 (Staged) 代码的增量安全审计。一旦发现高危漏洞，将精准阻断 Git 提交，防止风险混入代码库。
+- **🛠️ AI 自动修复 (--fix)**：针对确认为高危的漏洞点，AI 将尝试生成修复代码补丁。通过 `--fix` 参数，你可以一键将修复建议应用到源码，极大地缩短了「漏洞发现到修复」的周期。
 
 ### 📦 安装指南
 
@@ -100,6 +101,21 @@ npx ai-sec-scan ./test-components
 npx ai-sec-scan ./src --json audit-results.json
 ```
 
+#### 模式四：AI 自动修复 (--fix)
+
+针对扫描出的高危漏洞，你可以让 AI 尝试自动修复它们：
+
+```bash
+npx ai-sec-scan ./src --fix
+```
+**交互模式**：默认情况下，工具会逐个展示漏洞成因及修复前后的代码对比，并询问你是否应用修复。你可以选择应用 (`y`)、跳过 (`n`)、或者全部应用 (`all`)。
+
+**静默模式**：如果你希望在 CI 中自动应用所有修复，可以加上 `--yes` 参数：
+```bash
+npx ai-sec-scan ./src --fix --yes
+```
+工具会针对每一个高危确认点，使用 AI 生成的安全代码替换掉原始的危险代码。**建议在执行前确保当前 Git 工作区是干净的，以便随时回滚。**
+
 #### 模式二：结合 Git 的增量拦截 (-s 模式)
 
 增量模式只检查你最近进行变更的代码（即 Git 暂存区中的文件）。你可以将它集成到 `lint-staged` 和 `husky` 的自动化工作流中，作为 `pre-commit` 钩子的安全拦截器。
@@ -142,6 +158,7 @@ npx ai-sec-scan ./src --json audit-results.json
 - **📊 Beautiful Vulnerability Reports**: Automatically generates a modern data dashboard (`audit-report.html`) powered by HTML and Tailwind CSS, intuitively displaying risk details, severity levels, and precise mitigation suggestions.
 - **🧱 Full-Stack Code Support**: Perfectly compatible with Vue 2/3, React, Next.js, and Nuxt environments, as well as native Node.js backend code structures. It supports mainstream extensions such as `.vue`, `.js`, `.jsx`, `.ts`, and `.tsx`.
 - **🛡️ Incremental Commit Defense**: Built-in support for Husky and `lint-staged` allows for incremental security audits based on Git Staged code. If a high-risk vulnerability is discovered, it accurately blocks the Git commit to prevent risks from entering the repository.
+- **🛠️ AI Auto-Fixing (--fix)**: For confirmed high-risk vulnerabilities, AI will attempt to generate code patches. With the `--fix` parameter, you can apply these remediation suggestions to your source code with a single command, significantly shortening the "vulnerability-to-fix" cycle.
 
 ### 📦 Installation
 
@@ -216,6 +233,21 @@ You can export the scan summary and detailed vulnerability information into a JS
 ```bash
 npx ai-sec-scan ./src --json audit-results.json
 ```
+
+#### Mode 4: AI Auto-Fixing (--fix)
+
+For high-risk vulnerabilities discovered during the scan, you can have the AI attempt to fix them automatically:
+
+```bash
+npx ai-sec-scan ./src --fix
+```
+**Interactive Mode**: By default, the tool will display the reason for each vulnerability and a code diff, asking for your confirmation. You can choose to apply (`y`), skip (`n`), or apply all (`all`).
+
+**Silent Mode**: If you want to automatically apply all fixes in CI, use the `--yes` flag:
+```bash
+npx ai-sec-scan ./src --fix --yes
+```
+The tool will replace the original dangerous code with AI-generated secure code. **It is recommended to ensure your Git workspace is clean before execution so you can revert anytime.**
 
 #### Mode 2: Incremental Interception via Git Hooks (-s flag)
 
