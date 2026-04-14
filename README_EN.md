@@ -30,9 +30,14 @@ npm install -D ai-sec-scan
 npm install -g ai-sec-scan
 ```
 
-Configure your API Key in a `.env` file in the project root:
-```env
-QWEN_API_KEY=your_model_api_key
+### ✨ Zero-Config Initialization (Recommended)
+For new integrations, we provide an interactive setup wizard that automatically:
+1. Installs and configures `husky` and `lint-staged` for commit interception.
+2. Prompts you to select your preferred AI model (Qwen/DeepSeek/Ollama).
+3. Securely manages your API Keys in a `.env` file.
+
+```bash
+npx ai-sec-scan init
 ```
 
 ---

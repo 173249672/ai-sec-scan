@@ -30,9 +30,14 @@ npm install -D ai-sec-scan
 npm install -g ai-sec-scan
 ```
 
-在项目根目录创建 `.env` 文件并配置 API Key：
-```env
-QWEN_API_KEY=你的模型API密钥
+### ✨ 零配置一键接入 (推荐)
+对于新项目，我们提供了一个交互式初始化向导。它能帮您：
+1. 自动安装并配置 `husky` 与 `lint-staged` 防线。
+2. 交互式选择想用的 AI 模型 (Qwen/DeepSeek/Ollama)。
+3. 自动配置安全可靠的 `.env` 密钥存储。
+
+```bash
+npx ai-sec-scan init
 ```
 
 ---
