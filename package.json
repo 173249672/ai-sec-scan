@@ -1,6 +1,6 @@
 {
   "name": "ai-sec-scan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered universal security scanner for Vue/React/Node",
   "main": "lib/ast-scanner.js",
   "bin": {

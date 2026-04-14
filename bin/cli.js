@@ -6,6 +6,7 @@ const ora = require('ora');
 const chalk = require('chalk');
 const pLimit = require('p-limit');
 const fs = require('fs');
+const path = require('path');
 const open = require('open');
 const inquirer = require('inquirer');
 const { execSync } = require('child_process');
@@ -101,12 +102,13 @@ program
 program
   .command('scan [dir]', { isDefault: true })
   .description('兼容 Vue/React/Node 的 AI 自动化安全扫描工具')
-  .argument('[dir]', '指定扫描目录或文件 (默认: .)')
   .option('-s, --staged', '增量模式 (只扫描 Git 暂存区)')
   .option('--json <path>', '导出扫描结果到 JSON 文件')
   .option('--fix', '自动应用针对高危漏洞的 AI 修复建议')
   .option('--yes', '静默执行，直接应用所有修复（不进行交互式确认）')
   .action(async (dir, options) => {
+    // 如果 dir 为空，默认为 .
+    const targetPath = dir || '.';
     const startTime = Date.now();
     let files = [];
     const config = loadConfig();
@@ -129,7 +131,6 @@ program
         process.exit(1);
       }
     } else {
-      const targetPath = dir || '.';
       if (!fs.existsSync(targetPath)) {
         return console.log(chalk.red(`❌ 路径不存在: ${targetPath}`));
       }
