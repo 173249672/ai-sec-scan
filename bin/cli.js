@@ -91,9 +91,11 @@ program
   .description('兼容 Vue/React/Node 的 AI 自动化安全扫描工具')
   .argument('[dir]', '指定扫描目录 (全量模式)')
   .option('-s, --staged', '增量模式 (只扫描 Git 暂存区)')
+  .option('--json <path>', '导出扫描结果到 JSON 文件')
   .action(async (dir, options) => {
     const startTime = Date.now();
     let files = [];
+    const config = loadConfig();
 
     console.log(chalk.cyan.bold('\n🚀 AI Sec-Scan 启动...'));
 
@@ -125,7 +127,7 @@ program
     // --- 2. AST 初筛 ---
     const suspiciousFiles = [];
     files.forEach(file => {
-      const scanResult = scanFile(file);
+      const scanResult = scanFile(file, config);
       if (scanResult) suspiciousFiles.push({ file, ...scanResult });
     });
 
@@ -190,6 +192,11 @@ program
 
     const reportPath = './audit-report.html';
     fs.writeFileSync(reportPath, generateHtmlReport(reportData));
+
+    if (options.json) {
+      fs.writeFileSync(options.json, JSON.stringify(reportData, null, 2), 'utf-8');
+      console.log(chalk.green(`\n📊 JSON 报告已导出至: ${options.json}`));
+    }
 
     // --- 5. 打印摘要 ---
     console.log(chalk.cyan('\n' + '='.repeat(40)));
