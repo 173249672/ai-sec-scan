@@ -14,6 +14,7 @@ const { execSync } = require('child_process');
 const { scanFile } = require('../lib/ast-scanner');
 const { analyzeWithQwen } = require('../lib/ai-auditor');
 const { CacheManager } = require('../lib/cache-manager');
+const { loadConfig } = require('../lib/config-loader');
 /**
  * 生成漂亮的 HTML 报告模板
  */
@@ -100,8 +101,6 @@ program
     let files = [];
     const config = loadConfig();
 
-    console.log(chalk.cyan.bold('\n🚀 AI Sec-Scan 启动...'));
-
     // --- 1. 获取目标文件 ---
     if (options.staged) {
       console.log(chalk.blue('📌 模式: Git 增量扫描'));
@@ -120,11 +119,21 @@ program
         process.exit(1);
       }
     } else {
-      if (!dir) return console.log(chalk.red('❌ 全量模式下必须指定目录 (如: node index.js ./src)'));
-      console.log(chalk.blue(`📌 模式: 全量扫描 [${dir}]`));
-      files = await fg([`${dir}/**/*.{vue,js,jsx,ts,tsx}`], {
-        ignore: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/tests/**']
-      });
+      const targetPath = dir || '.';
+      if (!fs.existsSync(targetPath)) {
+        return console.log(chalk.red(`❌ 路径不存在: ${targetPath}`));
+      }
+
+      const stats = fs.statSync(targetPath);
+      if (stats.isFile()) {
+        console.log(chalk.blue(`📌 模式: 单文件扫描 [${targetPath}]`));
+        files = [targetPath];
+      } else {
+        console.log(chalk.blue(`📌 模式: 目录扫描 [${targetPath}]`));
+        files = fg.sync(path.join(targetPath, '**/*.{vue,js,jsx,ts,tsx}'), {
+          ignore: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/tests/**']
+        });
+      }
     }
 
     // --- 2. AST 初筛 ---
@@ -245,18 +254,30 @@ async function applyFixes(auditDetails, suspiciousFiles, skipConfirm = false) {
   // 1. 按文件归类漏洞点
   const fileFixes = {};
   auditDetails.forEach(detail => {
-    if (detail.riskLevel === 'High' && detail.fixCode && detail.fixCode.trim() !== '') {
+    if (detail.riskLevel === 'High' && detail.fixCode) {
       if (!fileFixes[detail.file]) fileFixes[detail.file] = [];
       const original = suspiciousFiles.find(s => s.file === detail.file);
       if (original && original.sinks) {
-        original.sinks.forEach(sink => {
-          fileFixes[detail.file].push({
-            reason: detail.reason,
-            start: sink.start,
-            end: sink.end,
-            oldCode: sink.codeSnippet,
-            fixCode: detail.fixCode
-          });
+        original.sinks.forEach((sink, idx) => {
+          let specificFix = '';
+          
+          // 如果是对象格式，按 1-indexed 索引取值
+          if (typeof detail.fixCode === 'object') {
+            specificFix = detail.fixCode[String(idx + 1)] || detail.fixCode[idx];
+          } else {
+            // 如果是字符串，则视为通用修复或单点修复
+            specificFix = detail.fixCode;
+          }
+
+          if (specificFix && specificFix.trim() !== '') {
+            fileFixes[detail.file].push({
+              reason: detail.reason,
+              start: sink.start,
+              end: sink.end,
+              oldCode: sink.codeSnippet,
+              fixCode: specificFix
+            });
+          }
         });
       }
     }
