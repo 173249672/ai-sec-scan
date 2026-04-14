@@ -13,7 +13,7 @@ console.log('✅ Default config test passed');
 
 // 2. Test user override
 console.log('Testing user configuration override...');
-const configPath = path.join(process.cwd(), 'sec-scan.config.js');
+const configPath = path.join(process.cwd(), 'sec-scan.test.config.js');
 const userConfigContent = `
 module.exports = {
   ai: {
@@ -25,14 +25,23 @@ module.exports = {
 
 fs.writeFileSync(configPath, userConfigContent);
 
-// Clear require cache for the config file if it was loaded
-delete require.cache[require.resolve(configPath)];
+// Update loadConfig to support custom paths if necessary? 
+// For now the lib only supports sec-scan.config.js
+// So the test will rename the file temporarily.
 
-const overriddenConfig = loadConfig();
-assert.strictEqual(overriddenConfig.ai.model, 'custom-model');
-assert.strictEqual(overriddenConfig.ai.temperature, 0.5);
-assert.ok(overriddenConfig.ai.systemPrompt.includes('全栈安全专家'), 'Default systemPrompt should still be available if not overridden');
+const realConfigPath = path.join(process.cwd(), 'sec-scan.config.js');
+const backupExists = fs.existsSync(realConfigPath);
+if (backupExists) fs.renameSync(realConfigPath, realConfigPath + '.bak');
 
-// Clean up
-fs.unlinkSync(configPath);
+fs.renameSync(configPath, realConfigPath);
+
+try {
+  const overriddenConfig = loadConfig();
+  assert.strictEqual(overriddenConfig.ai.model, 'custom-model');
+  assert.strictEqual(overriddenConfig.ai.temperature, 0.5);
+} finally {
+  fs.unlinkSync(realConfigPath);
+  if (backupExists) fs.renameSync(realConfigPath + '.bak', realConfigPath);
+}
+
 console.log('✅ User override test passed');

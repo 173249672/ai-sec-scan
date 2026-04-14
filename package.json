@@ -7,7 +7,7 @@
     "ai-sec-scan": "bin/cli.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/config-loader.test.js"
   },
   "files": [
     "lib",
