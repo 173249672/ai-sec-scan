@@ -33,12 +33,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_GITHUB_ID/ai-sec-scan.git"
+    "url": "https://github.com/173249672/ai-sec-scan.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_GITHUB_ID/ai-sec-scan/issues"
+    "url": "https://github.com/173249672/ai-sec-scan/issues"
   },
-  "homepage": "https://github.com/YOUR_GITHUB_ID/ai-sec-scan#readme",
+  "homepage": "https://github.com/173249672/ai-sec-scan#readme",
   "dependencies": {
     "@babel/parser": "^7.x",
     "@babel/traverse": "^7.x",
