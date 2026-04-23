@@ -12,12 +12,16 @@
 ### ✨ Core Features
 
 - **🧠 AI Smart Audit & False Positive Filtering**: Compatible with OpenAI protocol. Supports **Qwen**, **DeepSeek**, **Ollama**, and more. AI understands context to distinguish real vulnerabilities from normal logic.
+- **⚡ Tree-sitter Powered Static Engine**: High-performance AST analysis (JS, TS, Vue, JSX, TSX). Supports **Declarative Security Rules** via `.scm` queries for extreme speed and precision.
+- **📊 Premium Visual Reports**: Stunning dark-mode professional HTML reports with glassmorphism design, featuring:
+  - **Global I18n Support**: One-click toggle between **English** and **Chinese**.
+  - **Interactive Modal**: Elegant details popup for deep-dive into AI remediation suggestions.
+  - **Vulnerability Lifecycle**: Interactive "Lock" (to confirm) and "Ignore" (to archive) workflows.
 - **🛠️ Interactive Auto-Fixing (--fix)**: **Industry-leading remediation**. Proposes precise code patches and supports "Git-style" interactive confirmation.
+- **🔄 Legacy Support**: Full backward compatibility for `customRules` in `ai-sec-scan.config.js`.
 - **⚡ Millisecond-Level AI Caching**: Built-in content-hash caching engine. Unchanged code bypasses AI auditing, saving significant API costs.
-- **🧠 AI Expert Mode & Custom Prompts**: Full control over the AI's behavior. Customize the **System Prompt** via `init` wizard or config file to suit your specific security compliance needs.
-- **🧱 Full-Stack Grammar Support**: Deeply optimized for `.vue`, `.js`, `.jsx`, `.ts`, and `.tsx`. Supports both Vue SFC blocks and complex React JSX structures.
-- **📊 Automated Reporting & Integration**: Generates beautiful HTML visual reports and standard JSON exports for seamless CI/CD integration.
-- **🛡️ Incremental Commits Defense**: Supports `--staged` mode, working with Husky/lint-staged to block high-risk commits at the gates.
+- **🧠 AI Expert Mode & Custom Prompts**: Full control over the AI's behavior via `init` wizard or config file.
+- **🛡️ Incremental Commits Defense**: Supports `--staged` mode with Husky/lint-staged to block high-risk commits.
 
 ---
 
