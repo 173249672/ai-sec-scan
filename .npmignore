@@ -1,12 +1,19 @@
-.env
-node_modules
-audit-report.html
-audit-report.json
-test-components/
-.agent/
-.github/
-.DS_Store
-*.log
-docs/superpowers/
+# Test & Scratch
+test-lab/
+scratch/
 test/
-.secscan-cache.json
+
+# Config & Environment
+.env
+.gitignore
+.github/
+ai-sec-scan.config.js
+sec-scan.config.js
+
+# Artifacts
+audit-report.html
+*.log
+
+# System
+.DS_Store
+node_modules/

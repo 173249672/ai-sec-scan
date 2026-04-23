@@ -8,7 +8,7 @@ console.log('Testing default configuration...');
 const config = loadConfig();
 assert.strictEqual(config.ai.model, 'qwen3.5-plus');
 assert.strictEqual(config.ai.temperature, 0.1);
-assert.ok(config.ai.systemPrompt.includes('全栈安全专家'), 'Default systemPrompt should contain expected text');
+assert.ok(config.ai.systemPrompt.includes('expert security engineer'), 'Default systemPrompt should contain expected text');
 console.log('✅ Default config test passed');
 
 // 2. Test user override

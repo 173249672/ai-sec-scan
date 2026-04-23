@@ -1,7 +1,7 @@
 {
   "name": "ai-sec-scan",
-  "version": "1.0.1",
-  "description": "AI-powered universal security scanner for Vue/React/Node",
+  "version": "2.0.0",
+  "description": "AI-powered universal security scanner for Vue/React/Node (Tree-sitter Edition)",
   "main": "lib/ast-scanner.js",
   "bin": {
     "ai-sec-scan": "bin/cli.js"
@@ -13,7 +13,8 @@
     "lib",
     "bin",
     "README.md",
-    "README_EN.md"
+    "README.zh-CN.md",
+    "package.json"
   ],
   "engines": {
     "node": ">=16.0.0"

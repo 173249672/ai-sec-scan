@@ -24,7 +24,7 @@
   (#match? @attr_name "^(v-html|v-bind:src|v-bind:href)$")
 ) @vulnerability
 
-; Vue 3 的原始 HTML 渲染
-(interpolation
-  (identifier) @content
-) @potential_xss
+; Vue 3 的原始 HTML 渲染 (注：如果使用 HTML 引擎回退，此处会被忽略)
+; (interpolation
+;   (identifier) @content
+; ) @potential_xss
