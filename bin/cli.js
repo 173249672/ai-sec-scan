@@ -317,8 +317,17 @@ program
         files = [targetPath];
       } else {
         console.log(chalk.blue(`📌 模式: 目录扫描 [${targetPath}]`));
-        files = fg.sync(path.join(targetPath, '**/*.{vue,js,jsx,ts,tsx}'), {
-          ignore: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/tests/**']
+        
+        // 构建扫描模式
+        let patterns = [];
+        if (config.includes && config.includes.length > 0) {
+          patterns = config.includes.map(inc => path.join(targetPath, inc, '**/*.{vue,js,jsx,ts,tsx}'));
+        } else {
+          patterns = [path.join(targetPath, '**/*.{vue,js,jsx,ts,tsx}')];
+        }
+
+        files = fg.sync(patterns, {
+          ignore: config.excludes || ['**/node_modules/**', '**/dist/**', '**/build/**', '**/tests/**']
         });
       }
     }
