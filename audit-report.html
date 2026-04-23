@@ -47,7 +47,7 @@
             </div>
             <div class="flex flex-col items-end gap-1">
                <span class="px-3 py-1 bg-slate-800/50 rounded-lg border border-slate-700 text-[10px] font-bold text-slate-400 tracking-widest uppercase" data-i18n="generated">Report Generated</span>
-               <time class="text-lg font-bold text-white">4/23/2026 12:33:20 AM</time>
+               <time class="text-lg font-bold text-white">4/23/2026 3:15:14 AM</time>
             </div>
           </div>
         </header>
@@ -55,15 +55,15 @@
         <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-20">
           <div class="bg-slate-900/40 border border-slate-800 p-8 rounded-3xl space-y-2">
             <p class="text-xs font-bold text-slate-500 uppercase tracking-widest" data-i18n="statAudited">Files Audited</p>
-            <p class="text-4xl font-black text-white">5</p>
+            <p class="text-4xl font-black text-white">1</p>
           </div>
           <div class="bg-slate-900/40 border border-slate-800 p-8 rounded-3xl space-y-2 border-l-4 border-l-amber-500">
             <p class="text-xs font-bold text-amber-500/60 uppercase tracking-widest" data-i18n="statSuspects">AST Suspects</p>
-            <p class="text-4xl font-black text-amber-500">5</p>
+            <p class="text-4xl font-black text-amber-500">1</p>
           </div>
           <div class="bg-slate-900/40 border border-slate-800 p-8 rounded-3xl space-y-2 border-l-4 border-l-rose-500">
             <p class="text-xs font-bold text-rose-500/60 uppercase tracking-widest" data-i18n="statCritical">Confirmed Critical</p>
-            <p class="text-4xl font-black text-rose-500">5</p>
+            <p class="text-4xl font-black text-rose-500">1</p>
           </div>
           <div class="bg-slate-900/40 border border-slate-800 p-8 rounded-3xl space-y-2 border-l-4 border-l-emerald-500">
             <p class="text-xs font-bold text-emerald-500/60 uppercase tracking-widest" data-i18n="statSafe">False Positives</p>
@@ -84,7 +84,7 @@
                 High
               </span>
             </div>
-            <h3 class="text-xl font-bold text-white mt-4 group-hover:text-indigo-400 transition-colors">test-lab/vulnerability-suite.js</h3>
+            <h3 class="text-xl font-bold text-white mt-4 group-hover:text-indigo-400 transition-colors">test-lab/vulnerable-vue.vue</h3>
           </div>
           <div onclick="toggleLock(0)" class="lock-btn cursor-pointer bg-slate-800/50 p-3 rounded-2xl hover:bg-slate-700 transition-all active:scale-90 group-hover:border-amber-500/30 border border-transparent">
              <svg class="lock-icon w-6 h-6 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -93,132 +93,12 @@
 
         <div class="space-y-6">
           <div class="min-h-[80px]">
-            <p class="text-slate-400 text-sm leading-relaxed">The code contains multiple critical vulnerabilities: Command Injection via cp.exec(userCmd), Code Injection via eval(), Path Traversal via fs.readFileSync(filePath) with user input, ReDoS via dynamic RegExp, and Hardcoded Secrets. These allow attackers to execute arbitrary system commands, access sensitive files, crash the service, or expose credentials.</p>
+            <p class="text-slate-400 text-sm leading-relaxed">1. The v-html directive renders raw HTML without escaping, enabling Cross-Site Scripting (XSS) if statusMessage contains untrusted input. 2. The eval() function executes arbitrary code strings, leading to severe Code Injection vulnerabilities.</p>
           </div>
           
           <div class="pt-4 flex items-center gap-4">
-             <button onclick="showDetails('test-lab/vulnerability-suite.js', `1. Replace cp.exec with cp.execFile and validate arguments. 2. Remove eval() and use template literals. 3. Validate file paths using path.resolve and ensure they stay within a allowed directory. 4. Use environment variables for secrets. 5. Avoid dynamic RegExp or sanitize input. 6. Do not directly assign to sensitive DOM properties.`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
+             <button onclick="showDetails('test-lab/vulnerable-vue.vue', `1. Replace v-html with text interpolation {{ }} for plain text content, or sanitize HTML using a library like DOMPurify before assignment. 2. Eliminate eval() usage; invoke functions directly or use safe parsing methods like JSON.parse for data.`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
              <button onclick="toggleIgnore(0)" class="ignore-btn px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold rounded-xl transition-all active:scale-95" data-i18n="btnIgnore">Ignore</button>
-          </div>
-        </div>
-      </div>
-    
-      <div id="card-1" class="vulnerability-card group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:border-slate-700 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
-        <div class="flex justify-between items-start mb-6">
-          <div class="space-y-1">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-800/50 border-slate-700 text-slate-300">
-                Vulnerability
-              </span>
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-rose-500 text-white">
-                High
-              </span>
-            </div>
-            <h3 class="text-xl font-bold text-white mt-4 group-hover:text-indigo-400 transition-colors">test-lab/vulnerability-suite.tsx</h3>
-          </div>
-          <div onclick="toggleLock(1)" class="lock-btn cursor-pointer bg-slate-800/50 p-3 rounded-2xl hover:bg-slate-700 transition-all active:scale-90 group-hover:border-amber-500/30 border border-transparent">
-             <svg class="lock-icon w-6 h-6 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-        </div>
-
-        <div class="space-y-6">
-          <div class="min-h-[80px]">
-            <p class="text-slate-400 text-sm leading-relaxed">The component contains three critical vulnerabilities: 1) XSS via dangerouslySetInnerHTML using unsanitized user input. 2) Arbitrary Code Execution via eval() on user input. 3) Hardcoded sensitive CSRF token exposed in client-side code.</p>
-          </div>
-          
-          <div class="pt-4 flex items-center gap-4">
-             <button onclick="showDetails('test-lab/vulnerability-suite.tsx', `1. Remove dangerouslySetInnerHTML and render user input as text. 2. Never use eval(); implement specific event handlers for intended logic. 3. Do not hardcode secrets; pass sensitive tokens via secure props or manage them server-side.`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
-             <button onclick="toggleIgnore(1)" class="ignore-btn px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold rounded-xl transition-all active:scale-95" data-i18n="btnIgnore">Ignore</button>
-          </div>
-        </div>
-      </div>
-    
-      <div id="card-2" class="vulnerability-card group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:border-slate-700 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
-        <div class="flex justify-between items-start mb-6">
-          <div class="space-y-1">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-800/50 border-slate-700 text-slate-300">
-                Vulnerability
-              </span>
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-rose-500 text-white">
-                High
-              </span>
-            </div>
-            <h3 class="text-xl font-bold text-white mt-4 group-hover:text-indigo-400 transition-colors">test-lab/vulnerability-suite.vue</h3>
-          </div>
-          <div onclick="toggleLock(2)" class="lock-btn cursor-pointer bg-slate-800/50 p-3 rounded-2xl hover:bg-slate-700 transition-all active:scale-90 group-hover:border-amber-500/30 border border-transparent">
-             <svg class="lock-icon w-6 h-6 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-        </div>
-
-        <div class="space-y-6">
-          <div class="min-h-[80px]">
-            <p class="text-slate-400 text-sm leading-relaxed">代码中使用了 eval() 函数执行动态字符串，这构成了严重的代码注入漏洞。攻击者可通过构造恶意输入执行任意 JavaScript 代码，导致数据泄露、会话劫持或服务器端请求伪造。此外，文件中还存在 v-html 和 v-bind 导致的 XSS 风险。</p>
-          </div>
-          
-          <div class="pt-4 flex items-center gap-4">
-             <button onclick="showDetails('test-lab/vulnerability-suite.vue', `严禁使用 eval()。如需动态逻辑，请使用预定义的函数映射、switch 语句或安全的表达式解析库。同时建议审查并修复 v-html 和 v-bind 处的 XSS 隐患，对用户输入进行严格 sanitization。`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
-             <button onclick="toggleIgnore(2)" class="ignore-btn px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold rounded-xl transition-all active:scale-95" data-i18n="btnIgnore">Ignore</button>
-          </div>
-        </div>
-      </div>
-    
-      <div id="card-3" class="vulnerability-card group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:border-slate-700 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
-        <div class="flex justify-between items-start mb-6">
-          <div class="space-y-1">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-800/50 border-slate-700 text-slate-300">
-                Vulnerability
-              </span>
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-rose-500 text-white">
-                High
-              </span>
-            </div>
-            <h3 class="text-xl font-bold text-white mt-4 group-hover:text-indigo-400 transition-colors">test-lab/vulnerable-react.tsx</h3>
-          </div>
-          <div onclick="toggleLock(3)" class="lock-btn cursor-pointer bg-slate-800/50 p-3 rounded-2xl hover:bg-slate-700 transition-all active:scale-90 group-hover:border-amber-500/30 border border-transparent">
-             <svg class="lock-icon w-6 h-6 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-        </div>
-
-        <div class="space-y-6">
-          <div class="min-h-[80px]">
-            <p class="text-slate-400 text-sm leading-relaxed">1. Arbitrary File Write/Path Traversal: Using fs.writeFile with user-controlled input (user.id) allows attackers to overwrite sensitive files if executed in a Node.js environment (SSR/API). 2. XSS Risk: Using children={user.bio} can bypass React's automatic escaping if bio contains unexpected objects or HTML strings. 3. Insecure Architecture: require('fs') should never be used in frontend React components.</p>
-          </div>
-          
-          <div class="pt-4 flex items-center gap-4">
-             <button onclick="showDetails('test-lab/vulnerable-react.tsx', `1. Remove all file system operations from client-side components. Move save logic to a secure backend API endpoint with server-side validation. 2. Use standard JSX interpolation {user.bio} instead of children prop to ensure content is escaped. 3. Implement proper authentication and authorization checks on the backend API.`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
-             <button onclick="toggleIgnore(3)" class="ignore-btn px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold rounded-xl transition-all active:scale-95" data-i18n="btnIgnore">Ignore</button>
-          </div>
-        </div>
-      </div>
-    
-      <div id="card-4" class="vulnerability-card group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:border-slate-700 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
-        <div class="flex justify-between items-start mb-6">
-          <div class="space-y-1">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-800/50 border-slate-700 text-slate-300">
-                Vulnerability
-              </span>
-              <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-rose-500 text-white">
-                High
-              </span>
-            </div>
-            <h3 class="text-xl font-bold text-white mt-4 group-hover:text-indigo-400 transition-colors">test-lab/vulnerable-vue.vue</h3>
-          </div>
-          <div onclick="toggleLock(4)" class="lock-btn cursor-pointer bg-slate-800/50 p-3 rounded-2xl hover:bg-slate-700 transition-all active:scale-90 group-hover:border-amber-500/30 border border-transparent">
-             <svg class="lock-icon w-6 h-6 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-        </div>
-
-        <div class="space-y-6">
-          <div class="min-h-[80px]">
-            <p class="text-slate-400 text-sm leading-relaxed">The code contains two critical security vulnerabilities: 1. Use of `eval()` allows arbitrary code execution if the input string is compromised. 2. Use of `v-html` with unsanitized content leads to Cross-Site Scripting (XSS) as demonstrated by the malicious payload in `statusMessage`.</p>
-          </div>
-          
-          <div class="pt-4 flex items-center gap-4">
-             <button onclick="showDetails('test-lab/vulnerable-vue.vue', `1. Replace `eval()` with direct function calls or safe parsing logic (e.g., `console.log(command)`). 2. Replace `v-html` with text interpolation `{{ }}` to prevent HTML execution, or sanitize HTML content using a library like DOMPurify before rendering if HTML is required.`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
-             <button onclick="toggleIgnore(4)" class="ignore-btn px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold rounded-xl transition-all active:scale-95" data-i18n="btnIgnore">Ignore</button>
           </div>
         </div>
       </div>

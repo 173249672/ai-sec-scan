@@ -32,7 +32,7 @@ function generateHtmlReport(data) {
 
   const cards = details.map((item, idx) => {
     let style = categoryStyles[item.category] || 'bg-slate-800/50 border-slate-700 text-slate-300';
-    const escapedSuggestion = item.suggestion.replace(/'/g, "\\'").replace(/\n/g, "<br>");
+    const escapedSuggestion = item.suggestion.replace(/`/g, "\\`").replace(/'/g, "\\'").replace(/\n/g, "<br>");
     
     return `
       <div id="card-${idx}" class="vulnerability-card group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:border-slate-700 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
@@ -59,7 +59,7 @@ function generateHtmlReport(data) {
           </div>
           
           <div class="pt-4 flex items-center gap-4">
-             <button onclick="showDetails('${item.file}', \`${escapedSuggestion}\`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
+             <button onclick="showDetails('${item.file.replace(/'/g, "\\'")}', \`${escapedSuggestion}\`)" class="details-btn px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95" data-i18n="btnDetails">View Details</button>
              <button onclick="toggleIgnore(${idx})" class="ignore-btn px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold rounded-xl transition-all active:scale-95" data-i18n="btnIgnore">Ignore</button>
           </div>
         </div>
