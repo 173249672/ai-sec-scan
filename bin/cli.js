@@ -350,8 +350,12 @@ program
     const cacheManager = new CacheManager();
     const auditDetails = [];
 
+    let processedCount = 0;
+    const totalToAudit = suspiciousFiles.length;
+
     const tasks = suspiciousFiles.map(item => limit(async () => {
-      const spinner = ora(chalk.gray(`分析 ${item.file}...`)).start();
+      processedCount++;
+      const spinner = ora(chalk.gray(`[${processedCount}/${totalToAudit}] 分析 ${item.file}...`)).start();
       try {
         const report = await analyzeWithQwen(item.file, item, cacheManager);
         spinner.stop();
