@@ -16,6 +16,15 @@ const { scanFile } = require('../lib/ast-scanner');
 const { analyzeWithQwen } = require('../lib/ai-auditor');
 const { CacheManager } = require('../lib/cache-manager');
 const { loadConfig } = require('../lib/config-loader');
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 /**
  * 生成漂亮的 HTML 报告模板
  */
@@ -32,7 +41,11 @@ function generateHtmlReport(data) {
 
   const cards = details.map((item, idx) => {
     let style = categoryStyles[item.category] || 'bg-slate-800/50 border-slate-700 text-slate-300';
-    const escapedSuggestion = item.suggestion.replace(/`/g, "\\`").replace(/'/g, "\\'").replace(/\n/g, "<br>");
+    const safeReason = escapeHtml(item.reason);
+    const escapedSuggestion = escapeHtml(item.suggestion)
+      .replace(/`/g, "\\`")
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, "<br>");
     
     return `
       <div id="card-${idx}" class="vulnerability-card group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 hover:border-slate-700 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
@@ -55,7 +68,7 @@ function generateHtmlReport(data) {
 
         <div class="space-y-6">
           <div class="min-h-[80px]">
-            <p class="text-slate-400 text-sm leading-relaxed">${item.reason}</p>
+            <p class="text-slate-400 text-sm leading-relaxed">${safeReason}</p>
           </div>
           
           <div class="pt-4 flex items-center gap-4">
